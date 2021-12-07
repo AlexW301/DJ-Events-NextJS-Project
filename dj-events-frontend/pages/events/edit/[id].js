@@ -1,24 +1,34 @@
 import React, {useState} from "react";
+import {FaImage} from "react-icons/fa";
 import {useRouter} from "next/router";
 import Link from "next/link";
+import Image from "next/image";
 import Layout from "@/components/Layout";
 import {API_URL, APP_URL} from "@/config/index";
+import Modal from "@/components/Modal";
+import ImageUpload from "@/components/ImageUpload";
 //Styles
 import styles from "@/styles/Form.module.css";
 //React-Toastify for error message and success messages
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+//Moment is date/time formatter package
+import moment from "moment";
 
-export default function AddEventPage() {
+export default function EditEventPage({evt}) {
     const [values, setValues] = useState({
-        name: '',
-        performers: '',
-        venue: '',
-        address: '',
-        date: '',
-        time: '',
-        description: ''
+        name: evt.name,
+        performers: evt.performers,
+        venue: evt.venue,
+        address: evt.address,
+        date: evt.date,
+        time: evt.time,
+        description: evt.description
     })
+
+    const [imagePreview, setImagePreview] = useState(evt.image ? evt.image.formats.thumbnail.url : null)
+
+    const [showModal, setShowModal] = useState(false)
 
     const router = useRouter()
 
@@ -32,8 +42,8 @@ export default function AddEventPage() {
             toast.error('please fill in all fields')
         }
 
-        const res = await fetch(`${API_URL}/events`, {
-            method: 'POST',
+        const res = await fetch(`${API_URL}/events/${evt.id}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -54,10 +64,14 @@ export default function AddEventPage() {
         setValues({...values, [name]: value })
     }
 
+    const imageUploaded = (e) => {
+        console.log('uploaded')
+    }
+
     return (
         <Layout title='Add New Event'>
             <Link href='/events'>Go Back</Link>
-            <h1>Add Event</h1>
+            <h1>Edit Event</h1>
             <ToastContainer />
             <form onSubmit={handleSubmit} className={styles.form}>
                 <div className={styles.grid}>
@@ -79,7 +93,7 @@ export default function AddEventPage() {
                     </div>
                     <div>
                         <label htmlFor='date'>Date</label>
-                        <input type='date' name='date' id='date' value={values.date} onChange={handleInputChange}/>
+                        <input type='date' name='date' id='date' value={moment(values.date).format('yyyy-MM-DD')} onChange={handleInputChange}/>
                     </div>
                     <div>
                         <label htmlFor='time'>Time</label>
@@ -92,8 +106,38 @@ export default function AddEventPage() {
                     <textarea type='text' name='description' id='description' value={values.description} onChange={handleInputChange}></textarea>
                 </div>
 
-                <input type='submit' value='Add Event' className='btn'></input>
+                <input type='submit' value='Update Event' className='btn'></input>
             </form>
+
+            <h2>Event Image</h2>
+            {imagePreview ? (
+                <Image src={imagePreview} height={100} width={170} alt='event image' />
+               ) : ( 
+                <div>
+                    <p>No image uploaded</p>
+                </div>
+            )}
+
+            <div>
+                <button onClick={() => setShowModal(true)} className='btn-secondary'>
+                    <FaImage/> Set Image
+                </button>
+            </div>
+
+            <Modal show={showModal} onClose={() => setShowModal(false)}>
+                <ImageUpload evtId={evt.id} imageUploaded={imageUploaded}/>
+            </Modal>
         </Layout>
     )
+}
+
+export async function getServerSideProps({params: {id}}) {
+    const res = await fetch(`${API_URL}/events/${id}`)
+    const evt = await res.json()
+
+    return {
+        props: {
+            evt
+        }
+    }
 }
