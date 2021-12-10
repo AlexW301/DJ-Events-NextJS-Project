@@ -3,6 +3,7 @@ import React, {useState, useEffect, useContext} from "react";
 import Link from "next/link";
 import Layout from "@/components/Layout";
 import AuthContext from "@/context/AuthContext";
+import { useRouter } from "next/router";
 //React-Toastify for error message and success messages
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,6 +15,8 @@ const LoginPage = () => {
     const [password, setPassword] = useState('')
 
     const {login, error} = useContext(AuthContext)
+
+    const router = useRouter()
 
     useEffect(() => error && toast.error(error))
 

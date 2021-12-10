@@ -8,6 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 //Styles
 import styles from "@/styles/AuthForm.module.css";
+import router from "next/router";
 
 const RegisterPage = () => {
     const [username, setUsername] = useState('')
@@ -16,6 +17,8 @@ const RegisterPage = () => {
     const [passwordConfirm, setPasswordConfirm] = useState('')
 
     const {register, error} = useContext(AuthContext)
+
+    useEffect(() => error && toast.error(error))
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -49,7 +52,7 @@ const RegisterPage = () => {
                     <input type='password' id='passwordConfirm' value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} />
                     </div>
 
-                    <input type='submit' value='Login' className='btn' />
+                    <input type='submit' value='Register' className='btn' />
                 </form>
 
                 <p>
