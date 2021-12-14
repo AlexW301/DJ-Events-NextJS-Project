@@ -21,6 +21,8 @@ Icon
 ############################
 # Windows
 ############################
+## ADDED package-lock.json |np Dont think it matters where it goes but not sure
+package-lock.json
 
 Thumbs.db
 ehthumbs.db
