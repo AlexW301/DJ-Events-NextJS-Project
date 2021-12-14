@@ -48,51 +48,51 @@ export default function EventPage({evt}) {
     )
 }
 
-export async function getStaticPaths() {
-    const res = await fetch(`${API_URL}/events`);
-    const events = await res.json();
+// export async function getStaticPaths() {
+//     const res = await fetch(`${API_URL}/events`);
+//     const events = await res.json();
 
-    const paths = events.map(evt => ({
-        params: {slug: evt.slug}
-    }))
+//     const paths = events.map(evt => ({
+//         params: {slug: evt.slug}
+//     }))
 
-    return {
-        paths: paths,
-        fallback: true
-        // Set fallback to false | Will show a 404 error if the path is not found
-        // Set fallback to true  | Will search for path if it isnt found ... revalidate...
-    }
+//     return {
+//         paths: paths,
+//         fallback: true
+//         // Set fallback to false | Will show a 404 error if the path is not found
+//         // Set fallback to true  | Will search for path if it isnt found ... revalidate...
+//     }
 
-    // Example of what the paths actuallly look like....BELOW.....
-    // return {
-    //     paths: [
-    //         {params: {slug: 'slugvalue1}},
-    //         {params: {slug: 'slugvalue2}},
-    //         {params: {slug: 'slugvalue3}},
-    //     ]
-    // }
-}
+//     // Example of what the paths actuallly look like....BELOW.....
+//     // return {
+//     //     paths: [
+//     //         {params: {slug: 'slugvalue1}},
+//     //         {params: {slug: 'slugvalue2}},
+//     //         {params: {slug: 'slugvalue3}},
+//     //     ]
+//     // }
+// }
 
-export async function getStaticProps({params: {slug}}) {
+// export async function getStaticProps({params: {slug}}) {
+//     const res = await fetch(`${API_URL}/events/?slug=${slug}`);
+//     const events = await res.json();
+
+//     return {
+//         props: {
+//             evt: events[0]
+//         },
+//         revalidate: 1
+//     }
+// }
+
+
+export async function getServerSideProps({query: {slug}}) {
     const res = await fetch(`${API_URL}/events/?slug=${slug}`);
     const events = await res.json();
 
     return {
         props: {
             evt: events[0]
-        },
-        revalidate: 1
+        }
     }
 }
-
-
-// export async function getServerSideProps({query: {slug}}) {
-//     const res = await fetch(`${API_URL}/api/events/${slug}`);
-//     const events = await res.json();
-
-//     return {
-//         props: {
-//             evt: events[0]
-//         }
-//     }
-// }
